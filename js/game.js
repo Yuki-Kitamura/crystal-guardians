@@ -2071,7 +2071,7 @@ class Game {
             console.error("❌ フローティングテキスト描画エラー:", error);
         }
     }
-
+    
     // 攻撃エフェクトを追加
     addAttackEffect(type, startX, startY, endX, endY, color = '#f39c12') {
         try {
@@ -2095,15 +2095,15 @@ class Game {
             console.error("❌ 攻撃エフェクト追加エラー:", error);
         }
     }
-
+    
     // ダメージ数値を追加
     addDamageNumber(x, y, damage, color = '#e74c3c') {
         try {
             const damageNumber = {
-                x: x,
-                y: y,
+            x: x,
+            y: y,
                 damage: damage,
-                color: color,
+            color: color,
                 startTime: Date.now(),
                 duration: 1000, // 1秒
                 startY: y,
@@ -2325,7 +2325,7 @@ class Game {
             console.error("❌ ゲーム状態復旧エラー:", error);
             return false;
         }
-    }
+    } 
 } 
 
 window.addEventListener("load", () => { 

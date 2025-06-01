@@ -413,8 +413,8 @@
     color: white;
     z-index: 15;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
+    }
+    
 .grid-stats {
     display: flex;
     flex-direction: column;
@@ -920,8 +920,8 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 15px;
-}
-
+    }
+    
 .weather-info, .time-info {
     display: flex;
     align-items: center;
@@ -963,8 +963,8 @@
     font-weight: bold;
     color: #ecf0f1;
     margin-bottom: 8px;
-}
-
+    }
+    
 .forecast-items {
     display: flex;
     gap: 5px;
@@ -983,8 +983,8 @@
     display: block;
     font-size: 1rem;
     margin-bottom: 2px;
-}
-
+    }
+    
 /* 難易度情報パネル */
 .difficulty-panel {
     position: absolute;
@@ -1014,9 +1014,9 @@
 }
 
 .difficulty-icon {
-    font-size: 1.2rem;
-}
-
+        font-size: 1.2rem;
+    }
+    
 .difficulty-title {
     font-weight: bold;
     color: #ecf0f1;
@@ -1092,18 +1092,18 @@
     padding: 15px;
     background: rgba(52, 152, 219, 0.1);
     border-radius: 8px;
-}
-
+    }
+    
 .failure-reason-section h3,
 .improvement-section h3,
 .partial-reward-section h3 {
     color: #ecf0f1;
-    font-size: 1rem;
+        font-size: 1rem;
     margin-bottom: 10px;
     border-bottom: 1px solid rgba(52, 152, 219, 0.3);
     padding-bottom: 5px;
-}
-
+    }
+    
 .failure-reason {
     font-size: 1.1rem;
     font-weight: bold;
@@ -1150,10 +1150,10 @@
 }
 
 .reward-breakdown {
-    font-size: 0.8rem;
+        font-size: 0.8rem;
     color: #bdc3c7;
-}
-
+    }
+    
 /* 戦略ヒントモーダル */
 .strategy-hints {
     max-width: 700px;
@@ -1371,8 +1371,8 @@
     border: 2px solid rgba(52, 152, 219, 0.3);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     position: relative;
-}
-
+    }
+    
 .info-modal-header {
     display: flex;
     justify-content: space-between;
@@ -1398,8 +1398,8 @@
     font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.3s ease;
-}
-
+    }
+    
 .close-info-btn:hover {
     transform: scale(1.1);
 }
@@ -1424,8 +1424,8 @@
     font-size: 1.2rem;
     border-bottom: 1px solid rgba(52, 152, 219, 0.3);
     padding-bottom: 0.5rem;
-}
-
+    }
+    
 /* ミニマップ */
 .mini-map-container {
     grid-column: 1 / -1;
@@ -1450,9 +1450,9 @@
 
 .route-toggle-buttons {
     display: flex;
-    gap: 0.5rem;
-}
-
+        gap: 0.5rem;
+    }
+    
 .route-toggle-btn {
     background: linear-gradient(135deg, #9b59b6, #8e44ad);
     border: none;
@@ -1478,4 +1478,527 @@
     background: #2c3e50;
     display: block;
     margin: 0 auto;
+}
+
+/* モバイル最適化 - タッチ操作対応 */
+
+/* タッチターゲットサイズの最適化 */
+@media (hover: none) and (pointer: coarse) {
+    /* タッチデバイス専用スタイル */
+    .character-card {
+        min-height: 44px; /* iOS推奨の最小タッチターゲット */
+        min-width: 44px;
+        padding: 0.75rem;
+        touch-action: manipulation; /* ダブルタップズーム無効化 */
+    }
+    
+    .control-btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+    }
+    
+    .start-wave-btn {
+        min-height: 48px;
+        padding: 1rem 1.5rem;
+        touch-action: manipulation;
+    }
+    
+    /* タッチフィードバック強化 */
+    .character-card:active {
+        transform: scale(0.95);
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(155, 89, 182, 0.4));
+        transition: transform 0.1s ease;
+    }
+    
+    .control-btn:active {
+        transform: scale(0.9);
+        transition: transform 0.1s ease;
+    }
+    
+    .start-wave-btn:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+    
+    /* ホバー効果を無効化 */
+    .character-card:hover,
+    .control-btn:hover,
+    .start-wave-btn:hover,
+    .primary-btn:hover,
+    .secondary-btn:hover {
+        transform: none;
+    }
+}
+
+/* モバイル専用ジェスチャー対応 */
+.mobile-gesture-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.mobile-gesture-area.active {
+    pointer-events: auto;
+}
+
+/* スワイプ操作のビジュアルフィードバック */
+.swipe-indicator {
+    position: absolute;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.8), transparent);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.swipe-indicator.show {
+    opacity: 1;
+    animation: swipeGlow 1s ease-in-out infinite;
+}
+
+@keyframes swipeGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* モバイル専用コントロールパネル */
+.mobile-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.98), rgba(52, 73, 94, 0.98));
+    backdrop-filter: blur(15px);
+    border-top: 2px solid rgba(52, 152, 219, 0.3);
+    padding: 0.75rem;
+    z-index: 1600;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.mobile-controls.show {
+    transform: translateY(0);
+}
+
+.mobile-controls-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.mobile-controls-title {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.mobile-controls-toggle {
+    background: none;
+    border: none;
+    color: #bdc3c7;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.mobile-controls-toggle:active {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+
+/* モバイル専用キャラクター選択UI */
+.mobile-character-selector {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.98), rgba(52, 73, 94, 0.98));
+    backdrop-filter: blur(15px);
+    border-top: 2px solid rgba(52, 152, 219, 0.3);
+    padding: 1rem;
+    z-index: 1700;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.mobile-character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.mobile-character-card {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(155, 89, 182, 0.2));
+    border: 2px solid rgba(52, 152, 219, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    touch-action: manipulation;
+}
+
+.mobile-character-card:active {
+    transform: scale(0.95);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(155, 89, 182, 0.4));
+}
+
+.mobile-character-card.selected {
+    border-color: #f39c12;
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(230, 126, 34, 0.3));
+}
+
+.mobile-character-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mobile-character-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.mobile-character-name {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.mobile-character-cost {
+    font-size: 0.7rem;
+    color: #f39c12;
+    font-weight: bold;
+}
+
+/* モバイル専用アクションボタン */
+.mobile-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
+}
+
+.mobile-action-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    touch-action: manipulation;
+}
+
+.mobile-action-btn:active {
+    transform: scale(0.95);
+}
+
+.mobile-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mobile-action-btn.secondary {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.mobile-action-btn.success {
+    background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+/* モバイル専用情報パネル */
+.mobile-info-panel {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.95), rgba(52, 73, 94, 0.95));
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(52, 152, 219, 0.3);
+    padding: 0.75rem;
+    z-index: 1500;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.mobile-info-panel.show {
+    transform: translateY(0);
+}
+
+.mobile-info-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.mobile-info-tab {
+    background: rgba(52, 73, 94, 0.7);
+    border: 1px solid rgba(149, 165, 166, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+}
+
+.mobile-info-tab:active {
+    transform: scale(0.95);
+}
+
+.mobile-info-tab.active {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-color: #3498db;
+}
+
+.mobile-info-content {
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* モバイル専用ツールチップ */
+.mobile-tooltip {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.95), rgba(52, 73, 94, 0.95));
+    border: 2px solid rgba(52, 152, 219, 0.8);
+    border-radius: 12px;
+    padding: 1rem;
+    color: white;
+    font-size: 0.9rem;
+    z-index: 2000;
+    max-width: 90vw;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.mobile-tooltip.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* モバイル専用ドラッグ&ドロップフィードバック */
+.mobile-drag-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+    border: 3px solid rgba(46, 204, 113, 1);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    z-index: 2000;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.mobile-drag-feedback.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.mobile-drag-feedback.invalid {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.9), rgba(192, 57, 43, 0.9));
+    border-color: rgba(231, 76, 60, 1);
+}
+
+/* モバイル専用振動フィードバック用クラス */
+.vibrate-feedback {
+    animation: vibrateEffect 0.3s ease-in-out;
+}
+
+@keyframes vibrateEffect {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+/* 画面サイズ別の最適化 */
+@media (max-width: 768px) and (orientation: portrait) {
+    /* ポートレートモード専用 */
+    .game-container {
+        padding-top: 120px;
+        padding-bottom: 180px;
+    }
+    
+    .character-panel {
+        height: 160px;
+        overflow-y: auto;
+    }
+    
+    .mobile-character-selector {
+        display: block;
+    }
+    
+    .character-panel {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    /* ランドスケープモード専用 */
+    .game-container {
+        padding-top: 80px;
+        padding-bottom: 120px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .top-bar {
+        height: 50px;
+    }
+    
+    .character-panel {
+        height: 100px;
+    }
+    
+    .character-grid {
+        gap: 0.25rem;
+    }
+    
+    .character-card {
+        min-width: 60px;
+        padding: 0.5rem;
+    }
+}
+
+/* 超小型デバイス対応 */
+@media (max-width: 360px) {
+    .mobile-character-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .mobile-character-card {
+        min-height: 80px;
+        padding: 0.75rem;
+    }
+    
+    .mobile-character-icon {
+        font-size: 2rem;
+    }
+    
+    .mobile-character-name {
+        font-size: 0.7rem;
+    }
+    
+    .mobile-character-cost {
+        font-size: 0.6rem;
+    }
+    
+    .mobile-action-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* 高解像度ディスプレイ対応 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .character-icon,
+    .mobile-character-icon {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* ダークモード対応強化 */
+@media (prefers-color-scheme: dark) {
+    .mobile-controls,
+    .mobile-character-selector,
+    .mobile-info-panel {
+        background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
+    }
+    
+    .mobile-tooltip {
+        background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+    }
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+    .character-card,
+    .mobile-character-card,
+    .control-btn,
+    .mobile-action-btn,
+    .mobile-info-tab {
+        transition: none;
+    }
+    
+    .swipe-indicator {
+        animation: none;
+    }
+    
+    .vibrate-feedback {
+        animation: none;
+    }
+}
+
+/* フォーカス表示の改善 */
+.character-card:focus,
+.mobile-character-card:focus,
+.control-btn:focus,
+.mobile-action-btn:focus,
+.mobile-info-tab:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* 安全エリア対応（iPhone X以降） */
+@supports (padding: max(0px)) {
+    .mobile-controls,
+    .mobile-character-selector {
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+    
+    .mobile-info-panel {
+        padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+    
+    .top-bar {
+        padding-top: max(0, env(safe-area-inset-top));
+        height: calc(60px + max(0px, env(safe-area-inset-top)));
+    }
 }

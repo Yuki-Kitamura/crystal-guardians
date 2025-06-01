@@ -1,9 +1,130 @@
 {
-    "name": "Crystal Guardians",
-    "short_name": "CrystalGuardians",
-    "description": "タワーディフェンスゲーム",
-    "start_url": "/",
+    "name": "Crystal Guardians - タワーディフェンス",
+    "short_name": "Crystal Guardians",
+    "description": "魔法とクリスタルの力で敵を撃退するタワーディフェンスゲーム",
+    "start_url": "./index.html",
     "display": "standalone",
+    "orientation": "any",
+    "theme_color": "#2c3e50",
     "background_color": "#2c3e50",
-    "theme_color": "#3498db"
+    "scope": "./",
+    "lang": "ja",
+    "categories": ["games", "entertainment"],
+    "icons": [
+        {
+            "src": "./assets/icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./assets/icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "./assets/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "./assets/screenshot-mobile.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "モバイル版ゲーム画面"
+        },
+        {
+            "src": "./assets/screenshot-desktop.png",
+            "sizes": "1920x1080",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "デスクトップ版ゲーム画面"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "新しいゲーム",
+            "short_name": "新規ゲーム",
+            "description": "新しいゲームを開始",
+            "url": "./index.html?action=new",
+            "icons": [
+                {
+                    "src": "./assets/shortcut-new.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "ゲーム続行",
+            "short_name": "続行",
+            "description": "保存されたゲームを続行",
+            "url": "./index.html?action=continue",
+            "icons": [
+                {
+                    "src": "./assets/shortcut-continue.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "edge_side_panel": {
+        "preferred_width": 400
+    },
+    "launch_handler": {
+        "client_mode": "navigate-existing"
+    },
+    "handle_links": "preferred",
+    "protocol_handlers": [
+        {
+            "protocol": "web+crystalguardians",
+            "url": "./index.html?share=%s"
+        }
+    ],
+    "share_target": {
+        "action": "./share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
 }
