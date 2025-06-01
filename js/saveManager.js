@@ -1,0 +1,1 @@
+class SaveManager { save(data) { localStorage.setItem("crystalGuardians", JSON.stringify(data)); } load() { const saved = localStorage.getItem("crystalGuardians"); return saved ? JSON.parse(saved) : { gold: 100, wave: 1, characters: [] }; } }

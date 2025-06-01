@@ -1,0 +1,196 @@
+{
+  "enemies": {
+    "goblin": {
+      "id": "goblin",
+      "name": "ゴブリン",
+      "description": "基本的な敵。素早いが脆い。",
+      "stats": {
+        "hp": 40,
+        "speed": 1.2,
+        "reward": 8,
+        "armor": 0
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "👺",
+        "color": "#27ae60",
+        "size": 18
+      },
+      "type": "goblin"
+    },
+    "orc": {
+      "id": "orc",
+      "name": "オーク",
+      "description": "中程度の強さの敵。バランスの取れた能力。",
+      "stats": {
+        "hp": 80,
+        "speed": 0.8,
+        "reward": 15,
+        "armor": 2
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "👹",
+        "color": "#8e44ad",
+        "size": 24
+      },
+      "type": "orc"
+    },
+    "armored_goblin": {
+      "id": "armored_goblin",
+      "name": "装甲ゴブリン",
+      "description": "装甲を身に着けたゴブリン。防御力が高い。",
+      "stats": {
+        "hp": 120,
+        "speed": 0.9,
+        "reward": 20,
+        "armor": 5
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "🛡️",
+        "color": "#34495e",
+        "size": 22
+      },
+      "type": "armored_goblin"
+    },
+    "orc_chief": {
+      "id": "orc_chief",
+      "name": "オーク族長",
+      "description": "強力なボス級の敵。高いHPと攻撃力。",
+      "stats": {
+        "hp": 200,
+        "speed": 0.5,
+        "reward": 35,
+        "armor": 8
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": true,
+        "specialAbility": "intimidation"
+      },
+      "visual": {
+        "icon": "👑",
+        "color": "#c0392b",
+        "size": 30
+      },
+      "type": "orc_chief"
+    },
+    "flying_bat": {
+      "id": "flying_bat",
+      "name": "飛行コウモリ",
+      "description": "空中ユニット。地上攻撃を回避できる。",
+      "stats": {
+        "hp": 30,
+        "speed": 1.8,
+        "reward": 12,
+        "armor": 0
+      },
+      "abilities": {
+        "isFlying": true,
+        "hasSpecialAbility": true,
+        "specialAbility": "flight"
+      },
+      "visual": {
+        "icon": "🦇",
+        "color": "#9b59b6",
+        "size": 16
+      },
+      "type": "flying_bat"
+    },
+    "dragon": {
+      "id": "dragon",
+      "name": "ドラゴン",
+      "description": "最強のボス敵。圧倒的な能力を持つ。",
+      "stats": {
+        "hp": 800,
+        "speed": 0.3,
+        "reward": 100,
+        "armor": 15
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": true,
+        "specialAbility": "fire_aura"
+      },
+      "visual": {
+        "icon": "🐉",
+        "color": "#8b0000",
+        "size": 40
+      },
+      "type": "dragon"
+    },
+    "basic": {
+      "id": "basic",
+      "name": "基本敵",
+      "description": "後方互換性のための基本敵。",
+      "stats": {
+        "hp": 50,
+        "speed": 1.0,
+        "reward": 10,
+        "armor": 0
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "👹",
+        "color": "#e74c3c",
+        "size": 20
+      },
+      "type": "basic"
+    },
+    "fast": {
+      "id": "fast",
+      "name": "高速敵",
+      "description": "非常に素早い敵。",
+      "stats": {
+        "hp": 30,
+        "speed": 2.0,
+        "reward": 15,
+        "armor": 0
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "💨",
+        "color": "#f39c12",
+        "size": 16
+      },
+      "type": "fast"
+    },
+    "tank": {
+      "id": "tank",
+      "name": "重装敵",
+      "description": "非常に頑丈な敵。",
+      "stats": {
+        "hp": 150,
+        "speed": 0.5,
+        "reward": 30,
+        "armor": 10
+      },
+      "abilities": {
+        "isFlying": false,
+        "hasSpecialAbility": false
+      },
+      "visual": {
+        "icon": "🛡️",
+        "color": "#2c3e50",
+        "size": 28
+      },
+      "type": "tank"
+    }
+  }
+} 

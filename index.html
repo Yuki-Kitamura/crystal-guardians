@@ -1,0 +1,449 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="theme-color" content="#2c3e50"><title>Crystal Guardians - タワーディフェンス</title><!-- <link rel="manifest" href="manifest.json"> --><link rel="stylesheet" href="css/style.css"></head><body><div id="loading" class="loading-screen"><div class="loading-content"><div class="crystal-logo">💎</div><h1>Crystal Guardians</h1><div class="loading-bar"><div class="loading-progress"></div></div><p>ゲームを読み込み中...</p></div></div>
+
+<!-- マップ選択画面 -->
+<div id="mapSelectionScreen" class="map-selection-screen" style="display: none;">
+    <div class="map-selection-content">
+        <h1>マップを選択してください</h1>
+        <div class="map-grid">
+            <div class="map-card" data-map="1">
+                <div class="map-icon">🌲</div>
+                <div class="map-info">
+                    <h3>森の小道</h3>
+                    <p class="map-description">シンプルな直線ルート</p>
+                    <div class="difficulty-badge difficulty-easy">初級</div>
+                    <div class="map-waves">
+                        <div class="wave-preview">Wave 1: ゴブリン×8</div>
+                        <div class="wave-preview">Wave 2: ゴブリン×5 + オーク×3</div>
+                        <div class="wave-preview">Wave 3: ゴブリン×10 + 飛行コウモリ×4</div>
+                    </div>
+                </div>
+            </div>
+            <div class="map-card" data-map="2">
+                <div class="map-icon">⛰️</div>
+                <div class="map-info">
+                    <h3>曲がりくねった峡谷</h3>
+                    <p class="map-description">S字カーブの複雑なルート</p>
+                    <div class="difficulty-badge difficulty-medium">中級</div>
+                    <div class="map-waves">
+                        <div class="wave-preview">Wave 1: オーク×6</div>
+                        <div class="wave-preview">Wave 2: オーク×4 + 装甲ゴブリン×8</div>
+                        <div class="wave-preview">Wave 3: オーク族長×2 + 飛行コウモリ×6</div>
+                    </div>
+                </div>
+            </div>
+            <div class="map-card" data-map="3">
+                <div class="map-icon">🏛️</div>
+                <div class="map-info">
+                    <h3>分岐する遺跡</h3>
+                    <p class="map-description">分岐ルートで敵が分散</p>
+                    <div class="difficulty-badge difficulty-hard">上級</div>
+                    <div class="map-waves">
+                        <div class="wave-preview">Wave 1: 装甲ゴブリン×12</div>
+                        <div class="wave-preview">Wave 2: オーク族長×3 + 飛行コウモリ×8</div>
+                        <div class="wave-preview">Wave 3: ドラゴン×1 + ゴブリン群×20</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="gameContainer" class="game-container" style="display: none;">
+    <canvas id="gameCanvas" width="704" height="512"></canvas>
+    <div class="ui-overlay">
+        <div class="top-bar">
+            <div class="resource-display">
+                <span class="gold-display">
+                    <span class="icon">🪙</span>
+                    <span id="goldAmount">100</span>G
+                </span>
+                <span class="wave-display">
+                    <span class="icon">⚔️</span>
+                    <span id="currentMapName">森の小道</span> - Wave <span id="waveNumber">1</span>
+                </span>
+                <span class="crystal-health">
+                    <span class="icon">💎</span>
+                    <span id="crystalHealth">20</span>
+                </span>
+            </div>
+            <div class="game-controls">
+                <button id="pauseBtn" class="control-btn" title="一時停止">⏸️</button>
+                <button id="speedBtn" class="control-btn" title="速度変更">⏩</button>
+                <button id="infoBtn" class="control-btn" title="情報表示">ℹ️</button>
+                <button id="menuBtn" class="control-btn" title="メニュー">☰</button>
+                <button id="mapSelectBtn" class="control-btn" title="マップ選択">🗺️</button>
+                <button id="debugToggleBtn" class="control-btn debug-btn">🐛</button>
+                <button id="testBtn" class="control-btn debug-btn" style="display: none;">🧪</button>
+            </div>
+        </div>
+
+<!-- Wave進行表示 -->
+<div class="wave-progress-panel">
+    <div class="current-wave-info">
+        <div class="wave-title" id="waveTitle">Wave 1</div>
+        <div class="wave-description" id="waveDescription">ゴブリンの群れが森から現れた！</div>
+        <div class="wave-enemies" id="waveEnemies"></div>
+    </div>
+    <div class="wave-timer" id="waveTimer" style="display: none;">
+        <div class="timer-text">次のWaveまで: <span id="timerValue">5</span>秒</div>
+        <div class="timer-bar">
+            <div class="timer-progress" id="timerProgress"></div>
+        </div>
+    </div>
+</div>
+
+        <!-- 天候・時間帯表示パネル -->
+        <div class="weather-time-panel">
+            <div class="current-conditions">
+                <div class="weather-info">
+                    <span class="weather-icon" id="weatherIcon">☀️</span>
+                    <div class="weather-details">
+                        <div class="weather-name" id="weatherName">晴天</div>
+                        <div class="weather-description" id="weatherDescription">通常の戦闘状況</div>
+                    </div>
+                </div>
+                <div class="time-info">
+                    <span class="time-icon" id="timeIcon">🌞</span>
+                    <div class="time-details">
+                        <div class="time-name" id="timeName">昼間</div>
+                        <div class="time-description" id="timeDescription">通常状態</div>
+                    </div>
+                </div>
+            </div>
+            <div class="weather-forecast">
+                <div class="forecast-title">天候予報</div>
+                <div class="forecast-items" id="weatherForecast"></div>
+            </div>
+        </div>
+
+        <!-- 難易度情報パネル -->
+        <div class="difficulty-panel">
+            <div class="difficulty-header">
+                <span class="difficulty-icon">🎯</span>
+                <span class="difficulty-title" id="difficultyTitle">標準難易度</span>
+            </div>
+            <div class="attempt-info">
+                <div class="attempt-count">挑戦回数: <span id="attemptCount">1</span></div>
+                <div class="attempt-bonus" id="attemptBonus">初回挑戦</div>
+            </div>
+            <div class="difficulty-modifiers" id="difficultyModifiers"></div>
+        </div>
+
+        <!-- グリッド情報パネル -->
+        <div class="grid-info-panel">
+            <div class="grid-stats">
+                <div class="stat-item">
+                    <span class="stat-label">配置可能</span>
+                    <span class="stat-value" id="availableSlots">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">使用中</span>
+                    <span class="stat-value" id="occupiedSlots">0</span>
+                </div>
+            </div>
+            <div class="grid-coordinates" id="gridCoordinates" style="display: none;">
+                座標: (<span id="currentGridX">-</span>, <span id="currentGridY">-</span>)
+            </div>
+        </div>
+
+        <div class="character-panel">
+            <div class="character-grid">
+                <div class="character-card" data-character="warrior">
+                    <div class="character-icon">⚔️</div>
+                    <div class="character-name">ウォリアー</div>
+                    <div class="character-cost">100G</div>
+                </div>
+                <div class="character-card" data-character="archer">
+                    <div class="character-icon">🏹</div>
+                    <div class="character-name">アーチャー</div>
+                    <div class="character-cost">80G</div>
+                </div>
+                <div class="character-card" data-character="wizard">
+                    <div class="character-icon">🧙</div>
+                    <div class="character-name">ウィザード</div>
+                    <div class="character-cost">120G</div>
+                </div>
+                <div class="character-card" data-character="timemage">
+                    <div class="character-icon">⏰</div>
+                    <div class="character-name">タイムメイジ</div>
+                    <div class="character-cost">100G</div>
+                </div>
+                <div class="character-card" data-character="treasurehunter">
+                    <div class="character-icon">💰</div>
+                    <div class="character-name">トレジャーハンター</div>
+                    <div class="character-cost">60G</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="wave-controls">
+            <button id="startWaveBtn" class="start-wave-btn">
+                <span class="icon">🚀</span>ウェーブ開始
+            </button>
+        </div>
+        
+        <!-- キャラクター性能ツールチップ -->
+        <div id="characterTooltip" class="character-tooltip">
+            <div class="tooltip-header">
+                <div class="tooltip-icon"></div>
+                <div class="tooltip-name"></div>
+            </div>
+            <div class="tooltip-stats">
+                <div class="stat-item">
+                    <span class="stat-label">攻撃力</span>
+                    <span class="stat-value" id="tooltipDamage"></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">射程</span>
+                    <span class="stat-value" id="tooltipRange"></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">攻撃速度</span>
+                    <span class="stat-value" id="tooltipSpeed"></span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">コスト</span>
+                    <span class="stat-value" id="tooltipCost"></span>
+                </div>
+            </div>
+            <div class="tooltip-description" id="tooltipDescription"></div>
+        </div>
+        
+        <!-- ドラッグプレビュー -->
+        <div id="dragPreview" class="placement-preview" style="display: none;">
+            <div class="character-icon"></div>
+            <div class="range-indicator"></div>
+        </div>
+        
+        <!-- 配置キャンセルエリア -->
+        <div id="cancelArea" class="cancel-area">
+            <div class="cancel-text">ここにドロップしてキャンセル</div>
+        </div>
+    </div>
+
+    <!-- インフォメーションモーダル -->
+    <div id="infoModal" class="info-modal">
+        <div class="info-modal-content">
+            <div class="info-modal-header">
+                <h2 class="info-modal-title">ゲーム情報</h2>
+                <button id="closeInfoBtn" class="close-info-btn">×</button>
+            </div>
+            
+            <div class="info-panels-container">
+                <!-- Wave情報セクション -->
+                <div class="info-panel-section">
+                    <h3>🌊 Wave情報</h3>
+                    <div id="modalWaveInfo">
+                        <div class="wave-title" id="modalWaveTitle">Wave 1</div>
+                        <div class="wave-description" id="modalWaveDescription">ゴブリンが森から現れた！</div>
+                        <div class="wave-enemies" id="modalWaveEnemies">
+                            <!-- 敵情報がここに表示される -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 天候・時間帯情報セクション -->
+                <div class="info-panel-section">
+                    <h3>🌤️ 天候・時間帯</h3>
+                    <div id="modalWeatherInfo">
+                        <div class="current-conditions">
+                            <div class="weather-info">
+                                <span class="weather-icon" id="modalWeatherIcon">☀️</span>
+                                <div class="weather-details">
+                                    <div class="weather-name" id="modalWeatherName">晴天</div>
+                                    <div class="weather-description" id="modalWeatherDescription">標準的な天候</div>
+                                </div>
+                            </div>
+                            <div class="time-info">
+                                <span class="time-icon" id="modalTimeIcon">🌅</span>
+                                <div class="time-details">
+                                    <div class="time-name" id="modalTimeName">昼間</div>
+                                    <div class="time-description" id="modalTimeDescription">標準的な時間帯</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weather-forecast">
+                            <div class="forecast-title">今後の天候予報</div>
+                            <div class="forecast-items" id="modalWeatherForecast">
+                                <!-- 天候予報がここに表示される -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 難易度情報セクション -->
+                <div class="info-panel-section">
+                    <h3>🎯 難易度情報</h3>
+                    <div id="modalDifficultyInfo">
+                        <div class="difficulty-header">
+                            <span class="difficulty-icon">🎯</span>
+                            <span class="difficulty-title" id="modalDifficultyTitle">標準難易度</span>
+                        </div>
+                        <div class="attempt-info">
+                            <div class="attempt-count" id="modalAttemptCount">挑戦回数: 1回目</div>
+                            <div class="attempt-bonus" id="modalAttemptBonus">初回挑戦</div>
+                        </div>
+                        <div class="difficulty-modifiers" id="modalDifficultyModifiers">
+                            <!-- 難易度修正値がここに表示される -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- グリッド情報セクション -->
+                <div class="info-panel-section">
+                    <h3>📊 グリッド情報</h3>
+                    <div id="modalGridInfo">
+                        <div class="grid-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">配置可能</span>
+                                <span class="stat-value" id="modalAvailableSlots">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">配置済み</span>
+                                <span class="stat-value" id="modalOccupiedSlots">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ミニマップセクション -->
+            <div class="mini-map-container">
+                <div class="mini-map-header">
+                    <h3 class="mini-map-title">🗺️ マップ & 進行ルート</h3>
+                    <div class="route-toggle-buttons">
+                        <button id="showGroundRouteBtn" class="route-toggle-btn">地上ルート</button>
+                        <button id="showAirRouteBtn" class="route-toggle-btn">空中ルート</button>
+                        <button id="clearRouteBtn" class="route-toggle-btn">ルートクリア</button>
+                    </div>
+                </div>
+                <canvas id="miniMapCanvas" width="352" height="256"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wave完了モーダル -->
+<div id="waveCompleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>Wave完了！</h2>
+        <div class="reward-display">
+            <div class="reward-icon">🪙</div>
+            <div class="reward-text">
+                <span id="rewardAmount">50</span>G を獲得しました！
+            </div>
+        </div>
+        <div class="next-wave-info" id="nextWaveInfo">
+            <p>次のWave: <span id="nextWaveDescription"></span></p>
+        </div>
+        <div class="modal-actions">
+            <button id="nextWaveBtn" class="primary-btn">次のWaveへ</button>
+            <button id="continuePreparationBtn" class="secondary-btn">準備を続ける</button>
+        </div>
+    </div>
+</div>
+
+<!-- マップ完了モーダル -->
+<div id="mapCompleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>マップクリア！</h2>
+        <div class="completion-stats">
+            <div class="stat-item">
+                <span class="stat-label">獲得ゴールド</span>
+                <span class="stat-value" id="totalGoldEarned">0</span>G
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">残りクリスタル</span>
+                <span class="stat-value" id="remainingCrystal">20</span>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="nextMapBtn" class="primary-btn">次のマップへ</button>
+            <button id="mapSelectReturnBtn" class="secondary-btn">マップ選択に戻る</button>
+        </div>
+    </div>
+</div>
+
+<div id="gameOverModal" class="modal" style="display: none;"><div class="modal-content"><h2>ゲームオーバー</h2><p>クリスタルが破壊されました！</p><div class="modal-actions"><button id="continueBtn" class="primary-btn">📺 広告を見て続行</button><button id="restartBtn" class="secondary-btn">🔄 最初から</button></div></div></div></div>
+
+<!-- 失敗分析モーダル -->
+<div id="failureAnalysisModal" class="modal" style="display: none;">
+    <div class="modal-content failure-analysis">
+        <h2>🔍 失敗分析</h2>
+        <div class="failure-info">
+            <div class="failure-reason-section">
+                <h3>失敗原因</h3>
+                <div class="failure-reason" id="failureReason">クリスタル破壊</div>
+                <div class="failure-description" id="failureDescription">敵がクリスタルに到達してしまいました</div>
+            </div>
+            <div class="improvement-section">
+                <h3>改善提案</h3>
+                <ul class="improvement-suggestions" id="improvementSuggestions">
+                    <li>より多くの防御キャラクターを配置する</li>
+                    <li>敵の進路を予測して戦略的に配置する</li>
+                    <li>減速効果のあるキャラクターを活用する</li>
+                </ul>
+            </div>
+            <div class="partial-reward-section">
+                <h3>部分報酬</h3>
+                <div class="partial-reward">
+                    <span class="reward-icon">🪙</span>
+                    <span class="reward-amount" id="partialRewardAmount">25</span>G
+                </div>
+                <div class="reward-breakdown" id="rewardBreakdown">
+                    基本報酬: 20G + 進行度: 5G
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="showHintsBtn" class="primary-btn">💡 戦略ヒント</button>
+            <button id="retryMapBtn" class="primary-btn">🔄 再挑戦</button>
+            <button id="backToMapSelectBtn" class="secondary-btn">🗺️ マップ選択</button>
+        </div>
+    </div>
+</div>
+
+<!-- 戦略ヒントモーダル -->
+<div id="strategyHintsModal" class="modal" style="display: none;">
+    <div class="modal-content strategy-hints">
+        <h2>💡 戦略ヒント</h2>
+        <div class="hints-content">
+            <div class="current-attempt-info">
+                <div class="attempt-bonus-info" id="currentAttemptBonus">
+                    2回目挑戦ボーナス: ゴールド+10%
+                </div>
+            </div>
+            <div class="strategy-hints-list" id="strategyHints">
+                <div class="hint-item">🏹 アーチャーを道路の曲がり角に配置すると効果的です</div>
+                <div class="hint-item">⚔️ ウォリアーは敵の進路を塞ぐように配置しましょう</div>
+                <div class="hint-item">💰 初期は安価なキャラクターで経済を回しましょう</div>
+            </div>
+            <div class="weather-strategy-section">
+                <h3>🌤️ 天候・時間帯戦略</h3>
+                <div class="weather-strategy-tips" id="weatherStrategyTips">
+                    現在の天候と時間帯に応じた戦略アドバイスが表示されます
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="closeHintsBtn" class="primary-btn">理解しました</button>
+        </div>
+    </div>
+</div>
+
+<!-- データ管理システム -->
+<script src="js/dataManager.js"></script>
+<script src="js/dataAdapter.js"></script>
+
+<!-- ゲームシステム -->
+<script src="js/saveManager.js"></script>
+<script src="js/ads.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/difficulty.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/characters.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/stages.js"></script>
+<script src="js/minimap.js"></script>
+<script src="js/game.js"></script>
+<script src="tests/game.test.js"></script></body></html>

@@ -1,0 +1,9 @@
+{
+    "name": "Crystal Guardians",
+    "short_name": "CrystalGuardians",
+    "description": "タワーディフェンスゲーム",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#2c3e50",
+    "theme_color": "#3498db"
+}

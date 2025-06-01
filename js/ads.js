@@ -1,0 +1,1 @@
+class AdManager { constructor() { this.rewardAdReady = true; this.interstitialReady = true; } showRewardAd(callback) { console.log("リワード広告を表示"); setTimeout(() => { if(callback) callback(true); }, 1000); } showInterstitial(callback) { console.log("インタースティシャル広告を表示"); setTimeout(() => { if(callback) callback(); }, 500); } }

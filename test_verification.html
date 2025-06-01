@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Guardians - 包括的動作検証</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .mini-canvas {
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        .tile-info {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Crystal Guardians - 包括的動作検証システム</h1>
+    
+    <div class="test-container">
+        <h2>🎮 検証コントロール</h2>
+        <button onclick="runAllTests()">全テスト実行</button>
+        <button onclick="runTileDisplayTest()">タイル表示テスト</button>
+        <button onclick="runMapLoadTest()">マップ読み込みテスト</button>
+        <button onclick="runMinimapTest()">ミニマップテスト</button>
+        <button onclick="clearResults()">結果クリア</button>
+    </div>
+
+    <div id="results" class="test-grid"></div>
+
+    <!-- ゲームスクリプトを読み込み -->
+    <script src="js/grid.js"></script>
+    <script src="js/minimap.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/stages.js"></script>
+    <script src="js/characters.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/game.js"></script>
+
+    <script>
+        let testResults = [];
+        let gameInstance = null;
+        let originalConsoleLog = console.log;
+        let originalConsoleError = console.error;
+        let capturedLogs = [];
+
+        // コンソールログをキャプチャ
+        console.log = function(...args) {
+            capturedLogs.push({type: 'log', message: args.join(' '), timestamp: new Date().toLocaleTimeString()});
+            originalConsoleLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            capturedLogs.push({type: 'error', message: args.join(' '), timestamp: new Date().toLocaleTimeString()});
+            originalConsoleError.apply(console, args);
+        };
+
+        function addResult(category, test, status, message, details = null) {
+            testResults.push({
+                category,
+                test,
+                status,
+                message,
+                details,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const resultsDiv = document.getElementById('results');
+            const categories = [...new Set(testResults.map(r => r.category))];
+            
+            resultsDiv.innerHTML = categories.map(category => {
+                const categoryResults = testResults.filter(r => r.category === category);
+                const successCount = categoryResults.filter(r => r.status === 'success').length;
+                const totalCount = categoryResults.length;
+                
+                return `
+                    <div class="test-container">
+                        <h3>${category} (${successCount}/${totalCount})</h3>
+                        ${categoryResults.map(result => `
+                            <div class="test-result ${result.status}">
+                                <strong>${result.test}</strong><br>
+                                ${result.message}<br>
+                                <small>${result.timestamp}</small>
+                                ${result.details ? `<div class="tile-info">${result.details}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
+            
+            // コンソールログも表示
+            if (capturedLogs.length > 0) {
+                resultsDiv.innerHTML += `
+                    <div class="test-container">
+                        <h3>📋 コンソールログ (${capturedLogs.length}件)</h3>
+                        ${capturedLogs.slice(-20).map(log => `
+                            <div class="test-result ${log.type === 'error' ? 'error' : 'info'}">
+                                <strong>${log.type.toUpperCase()}</strong><br>
+                                ${log.message}<br>
+                                <small>${log.timestamp}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function clearResults() {
+            testResults = [];
+            capturedLogs = [];
+            updateDisplay();
+        }
+
+        // 1. タイル表示テスト（強化版）
+        function runTileDisplayTest() {
+            addResult('🎨 タイル表示', 'テスト開始', 'info', 'タイル表示の詳細検証を開始します');
+            
+            try {
+                // PANEL_TYPES定数の確認
+                if (typeof PANEL_TYPES !== 'undefined') {
+                    addResult('🎨 タイル表示', 'PANEL_TYPES確認', 'success', 
+                        'PANEL_TYPES定数が定義されています', 
+                        `PANEL_TYPES: ${JSON.stringify(PANEL_TYPES, null, 2)}`);
+                } else {
+                    addResult('🎨 タイル表示', 'PANEL_TYPES確認', 'error', 'PANEL_TYPES定数が未定義です');
+                    return;
+                }
+
+                // GridSystemクラスの確認
+                if (typeof GridSystem !== 'undefined') {
+                    addResult('🎨 タイル表示', 'GridSystemクラス確認', 'success', 'GridSystemクラスが定義されています');
+                } else {
+                    addResult('🎨 タイル表示', 'GridSystemクラス確認', 'error', 'GridSystemクラスが未定義です');
+                    return;
+                }
+                
+                // 各マップのタイル検証
+                for (let mapNum = 1; mapNum <= 3; mapNum++) {
+                    addResult('🎨 タイル表示', `マップ${mapNum}検証開始`, 'info', `マップ${mapNum}の詳細検証を開始します`);
+                    
+                    // ステップ1: GridSystemインスタンス作成
+                    let testGrid;
+                    try {
+                        testGrid = new GridSystem(mapNum);
+                        addResult('🎨 タイル表示', `マップ${mapNum}インスタンス作成`, 'success', 'GridSystemインスタンスが作成されました');
+                    } catch (constructorError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}インスタンス作成`, 'error', 
+                            `コンストラクタエラー: ${constructorError.message}`);
+                        continue;
+                    }
+                    
+                    // ステップ2: マップデータの直接確認
+                    let rawMapData;
+                    try {
+                        rawMapData = testGrid.getMapData(mapNum);
+                        if (rawMapData && rawMapData.length > 0) {
+                            addResult('🎨 タイル表示', `マップ${mapNum}生データ取得`, 'success', 
+                                `生データサイズ: ${rawMapData.length}行 × ${rawMapData[0]?.length || 0}列`, 
+                                `生データ内容:\n${rawMapData.map((row, y) => `Row ${y}: [${row.join(', ')}]`).join('\n')}`);
+                        } else {
+                            addResult('🎨 タイル表示', `マップ${mapNum}生データ取得`, 'error', 'マップデータが空または未定義です');
+                            continue;
+                        }
+                    } catch (dataError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}生データ取得`, 'error', 
+                            `データ取得エラー: ${dataError.message}`);
+                        continue;
+                    }
+                    
+                    // ステップ3: charToTypeメソッドのテスト
+                    try {
+                        const charTests = ['S', 'G', '-', '.', 'R', 'W'];
+                        const charResults = charTests.map(char => {
+                            const result = testGrid.charToType(char);
+                            return `'${char}' → '${result}'`;
+                        });
+                        addResult('🎨 タイル表示', `マップ${mapNum}文字変換`, 'success', 
+                            '文字変換テスト完了', `変換結果:\n${charResults.join('\n')}`);
+                    } catch (charError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}文字変換`, 'error', 
+                            `文字変換エラー: ${charError.message}`);
+                    }
+                    
+                    // ステップ4: グリッド状態の確認
+                    let typeCounts = {};
+                    let tileDetails = [];
+                    let debugGrid = [];
+                    let gridCheckSuccess = true;
+                    
+                    try {
+                        for (let y = 0; y < 8; y++) {
+                            debugGrid[y] = [];
+                            for (let x = 0; x < 11; x++) {
+                                const panel = testGrid.getPanel(x, y);
+                                if (panel) {
+                                    debugGrid[y][x] = panel.type;
+                                    typeCounts[panel.type] = (typeCounts[panel.type] || 0) + 1;
+                                    
+                                    // 重要なタイルの位置を記録
+                                    if (panel.type === 'start' || panel.type === 'goal' || panel.type === 'rock' || panel.type === 'water') {
+                                        tileDetails.push(`${panel.type}(${x},${y})`);
+                                    }
+                                } else {
+                                    debugGrid[y][x] = 'NULL';
+                                    gridCheckSuccess = false;
+                                }
+                            }
+                        }
+                        
+                        if (gridCheckSuccess) {
+                            addResult('🎨 タイル表示', `マップ${mapNum}グリッド確認`, 'success', 'グリッド状態の確認が完了しました');
+                        } else {
+                            addResult('🎨 タイル表示', `マップ${mapNum}グリッド確認`, 'warning', 'グリッドにNULLパネルが存在します');
+                        }
+                    } catch (gridError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}グリッド確認`, 'error', 
+                            `グリッド確認エラー: ${gridError.message}`);
+                        continue;
+                    }
+                    
+                    const detailsText = `タイプ別カウント: ${JSON.stringify(typeCounts, null, 2)}\n重要タイル: ${tileDetails.join(', ')}\n\nグリッド状態:\n${debugGrid.map((row, y) => `Row ${y}: [${row.join(', ')}]`).join('\n')}`;
+                    
+                    // ステップ5: loadMapメソッドを再度呼び出してテスト
+                    try {
+                        addResult('🎨 タイル表示', `マップ${mapNum}再読み込み`, 'info', 'loadMapメソッドを再実行します');
+                        testGrid.loadMap(mapNum);
+                        
+                        // 再読み込み後の状態確認
+                        let reloadTypeCounts = {};
+                        for (let y = 0; y < 8; y++) {
+                            for (let x = 0; x < 11; x++) {
+                                const panel = testGrid.getPanel(x, y);
+                                if (panel) {
+                                    reloadTypeCounts[panel.type] = (reloadTypeCounts[panel.type] || 0) + 1;
+                                }
+                            }
+                        }
+                        
+                        addResult('🎨 タイル表示', `マップ${mapNum}再読み込み後`, 'success', 
+                            '再読み込み後の状態確認完了', `再読み込み後タイプ別カウント: ${JSON.stringify(reloadTypeCounts, null, 2)}`);
+                    } catch (reloadError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}再読み込み`, 'error', 
+                            `再読み込みエラー: ${reloadError.message}`);
+                    }
+                    
+                    // ステップ6: 必須タイルの存在確認
+                    if (typeCounts['start'] && typeCounts['goal']) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}タイル配置`, 'success', 
+                            `スタート: ${typeCounts['start']}個, ゴール: ${typeCounts['goal']}個`, detailsText);
+                    } else {
+                        addResult('🎨 タイル表示', `マップ${mapNum}タイル配置`, 'error', 
+                            'スタートまたはゴールタイルが見つかりません', detailsText);
+                    }
+                    
+                    // ステップ7: 描画テスト
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 11 * 64;
+                        canvas.height = 8 * 64;
+                        const ctx = canvas.getContext('2d');
+                        
+                        testGrid.render(ctx);
+                        addResult('🎨 タイル表示', `マップ${mapNum}描画`, 'success', '描画処理が正常に完了しました');
+                        
+                        // ミニキャンバスを結果に追加
+                        canvas.className = 'mini-canvas';
+                        canvas.style.width = '220px';
+                        canvas.style.height = '160px';
+                        canvas.title = `マップ${mapNum}プレビュー`;
+                        
+                    } catch (renderError) {
+                        addResult('🎨 タイル表示', `マップ${mapNum}描画`, 'error', 
+                            `描画エラー: ${renderError.message}`);
+                    }
+                }
+                
+            } catch (error) {
+                addResult('🎨 タイル表示', 'システムエラー', 'error', `予期しないエラー: ${error.message}`);
+            }
+        }
+
+        // 2. マップ読み込みテスト
+        function runMapLoadTest() {
+            addResult('🗺️ マップ読み込み', 'テスト開始', 'info', 'マップデータの読み込み検証を開始します');
+            
+            try {
+                for (let mapNum = 1; mapNum <= 3; mapNum++) {
+                    const gridSystem = new GridSystem();
+                    const mapData = gridSystem.getMapData(mapNum);
+                    
+                    if (mapData && mapData.length === 8 && mapData[0].length === 11) {
+                        addResult('🗺️ マップ読み込み', `マップ${mapNum}データ`, 'success', 
+                            `正常なサイズ: ${mapData.length}行 × ${mapData[0].length}列`);
+                        
+                        // マップの内容検証
+                        let hasStart = false, hasGoal = false, hasRoad = false;
+                        for (let row of mapData) {
+                            for (let cell of row) {
+                                if (cell === 'S') hasStart = true;
+                                if (cell === 'G') hasGoal = true;
+                                if (cell === '-') hasRoad = true;
+                            }
+                        }
+                        
+                        if (hasStart && hasGoal && hasRoad) {
+                            addResult('🗺️ マップ読み込み', `マップ${mapNum}内容`, 'success', 
+                                'スタート、ゴール、道路が正しく配置されています');
+                        } else {
+                            addResult('🗺️ マップ読み込み', `マップ${mapNum}内容`, 'warning', 
+                                `不完全なマップ: S=${hasStart}, G=${hasGoal}, Road=${hasRoad}`);
+                        }
+                        
+                    } else {
+                        addResult('🗺️ マップ読み込み', `マップ${mapNum}データ`, 'error', 
+                            'マップデータのサイズが不正です');
+                    }
+                }
+                
+            } catch (error) {
+                addResult('🗺️ マップ読み込み', 'システムエラー', 'error', `エラー: ${error.message}`);
+            }
+        }
+
+        // 3. ミニマップテスト
+        function runMinimapTest() {
+            addResult('🗺️ ミニマップ', 'テスト開始', 'info', 'ミニマップ機能の検証を開始します');
+            
+            try {
+                // ミニマップキャンバスを作成
+                const miniCanvas = document.createElement('canvas');
+                miniCanvas.id = 'miniMapCanvas';
+                miniCanvas.width = 200;
+                miniCanvas.height = 150;
+                document.body.appendChild(miniCanvas);
+                
+                // 仮のゲームオブジェクトを作成
+                const mockGame = {
+                    gridSystem: new GridSystem(1),
+                    characters: []
+                };
+                
+                const miniMapRenderer = new MiniMapRenderer(mockGame);
+                
+                if (miniMapRenderer.canvas && miniMapRenderer.ctx) {
+                    addResult('🗺️ ミニマップ', 'レンダラー初期化', 'success', 'ミニマップレンダラーが正常に初期化されました');
+                    
+                    // 基本描画テスト
+                    miniMapRenderer.drawBasicMiniMap();
+                    addResult('🗺️ ミニマップ', '基本描画', 'success', '基本ミニマップの描画が完了しました');
+                    
+                    // ルート表示テスト
+                    miniMapRenderer.showRoute('ground');
+                    addResult('🗺️ ミニマップ', '地上ルート表示', 'success', '地上ルートの表示が完了しました');
+                    
+                    miniMapRenderer.showRoute('air');
+                    addResult('🗺️ ミニマップ', '空中ルート表示', 'success', '空中ルートの表示が完了しました');
+                    
+                } else {
+                    addResult('🗺️ ミニマップ', 'レンダラー初期化', 'error', 'ミニマップキャンバスの初期化に失敗しました');
+                }
+                
+                // クリーンアップ
+                document.body.removeChild(miniCanvas);
+                
+            } catch (error) {
+                addResult('🗺️ ミニマップ', 'システムエラー', 'error', `エラー: ${error.message}`);
+            }
+        }
+
+        // 4. 全テスト実行
+        function runAllTests() {
+            clearResults();
+            addResult('🔍 総合テスト', '開始', 'info', '全ての検証テストを開始します');
+            
+            setTimeout(() => runTileDisplayTest(), 100);
+            setTimeout(() => runMapLoadTest(), 500);
+            setTimeout(() => runMinimapTest(), 1000);
+            
+            setTimeout(() => {
+                const totalTests = testResults.length;
+                const successTests = testResults.filter(r => r.status === 'success').length;
+                const errorTests = testResults.filter(r => r.status === 'error').length;
+                
+                addResult('🔍 総合テスト', '完了', 
+                    errorTests === 0 ? 'success' : 'warning', 
+                    `成功: ${successTests}, エラー: ${errorTests}, 総計: ${totalTests}`);
+            }, 1500);
+        }
+
+        // ページ読み込み時に自動実行
+        window.addEventListener('load', () => {
+            addResult('🔍 システム', '初期化', 'info', '検証システムが準備完了しました');
+        });
+    </script>
+</body>
+</html> 

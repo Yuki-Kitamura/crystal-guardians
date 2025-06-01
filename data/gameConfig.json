@@ -1,0 +1,114 @@
+{
+  "gameConfig": {
+    "version": "1.0.0",
+    "gameSettings": {
+      "initialGold": 100,
+      "maxEnemiesReached": 10,
+      "gameSpeed": 1,
+      "autoProgressEnabled": false
+    },
+    "gridSettings": {
+      "gridWidth": 11,
+      "gridHeight": 8,
+      "panelSize": 64,
+      "canvasWidth": 704,
+      "canvasHeight": 512
+    },
+    "panelTypes": {
+      "EMPTY": ".",
+      "WALL": "W",
+      "ROAD": "R",
+      "PATH": "-",
+      "VERTICAL_PATH": "|",
+      "START": "S",
+      "GOAL": "G"
+    },
+    "weatherSystem": {
+      "enabled": true,
+      "effects": {
+        "sunny": {
+          "name": "晴れ",
+          "icon": "☀️",
+          "goldMultiplier": 1.1,
+          "enemySpeedMultiplier": 1.0,
+          "characterAttackSpeedMultiplier": 1.0
+        },
+        "rainy": {
+          "name": "雨",
+          "icon": "🌧️",
+          "goldMultiplier": 0.9,
+          "enemySpeedMultiplier": 0.8,
+          "characterAttackSpeedMultiplier": 0.9
+        },
+        "stormy": {
+          "name": "嵐",
+          "icon": "⛈️",
+          "goldMultiplier": 0.8,
+          "enemySpeedMultiplier": 0.7,
+          "characterAttackSpeedMultiplier": 0.8
+        },
+        "foggy": {
+          "name": "霧",
+          "icon": "🌫️",
+          "goldMultiplier": 1.0,
+          "enemySpeedMultiplier": 0.9,
+          "characterAttackSpeedMultiplier": 0.85
+        }
+      }
+    },
+    "difficultySystem": {
+      "enabled": true,
+      "baseMultipliers": {
+        "enemyHpMultiplier": 1.0,
+        "enemySpeedMultiplier": 1.0,
+        "goldMultiplier": 1.0,
+        "characterDamageMultiplier": 1.0
+      },
+      "mapDifficultyMultipliers": {
+        "1": {
+          "enemyHpMultiplier": 1.0,
+          "enemySpeedMultiplier": 1.0,
+          "goldMultiplier": 1.0
+        },
+        "2": {
+          "enemyHpMultiplier": 1.2,
+          "enemySpeedMultiplier": 1.1,
+          "goldMultiplier": 1.1
+        },
+        "3": {
+          "enemyHpMultiplier": 1.5,
+          "enemySpeedMultiplier": 1.2,
+          "goldMultiplier": 1.2
+        }
+      }
+    },
+    "ui": {
+      "colors": {
+        "primary": "#3498db",
+        "secondary": "#2ecc71",
+        "danger": "#e74c3c",
+        "warning": "#f39c12",
+        "info": "#9b59b6",
+        "success": "#27ae60"
+      },
+      "animations": {
+        "floatingTextDuration": 1500,
+        "attackEffectDuration": 500,
+        "damageNumberDuration": 1000
+      }
+    },
+    "performance": {
+      "maxFloatingTexts": 20,
+      "maxAttackEffects": 50,
+      "maxDamageNumbers": 30,
+      "enableDebugMode": false
+    },
+    "dataSource": {
+      "type": "local",
+      "baseUrl": "./data/",
+      "fallbackEnabled": true,
+      "cacheEnabled": true,
+      "cacheDuration": 300000
+    }
+  }
+} 
